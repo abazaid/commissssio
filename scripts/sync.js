@@ -9,18 +9,24 @@ function slugify(text) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
-const CF_API_KEY = '8f77864791aa44fb9668529b2b1ff4c5';
-const BASE_URL = 'https://api.commissionfactory.com/V1/Affiliate';
+const CF_API_KEY = process.env.CF_API_KEY;
+const CF_BASE_URL = (process.env.CF_BASE_URL || 'https://api.commissionfactory.com').replace(/\/$/, '');
+const BASE_URL = `${CF_BASE_URL}/V1/Affiliate`;
 
 const pool = mysql.createPool({
-  host: 'localhost',
-  port: 3306,
-  database: 'commnision',
-  user: 'root',
-  password: '',
+  host: process.env.DB_HOST || '127.0.0.1',
+  port: Number(process.env.DB_PORT) || 3306,
+  database: process.env.DB_NAME || 'commnision',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
+  waitForConnections: true,
+  connectionLimit: 5,
 });
 
 async function fetchWithAuth(endpoint) {
+  if (!CF_API_KEY) {
+    throw new Error('CF_API_KEY is missing');
+  }
   const url = `${BASE_URL}/${endpoint}&apiKey=${CF_API_KEY}`;
   const response = await fetch(url);
   if (!response.ok) throw new Error(`API Error: ${response.status}`);
