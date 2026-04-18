@@ -31,11 +31,11 @@ export async function GET(request: Request) {
     return NextResponse.json(cached);
   }
   
-  let whereClause = 'WHERE o.is_expired = 0';
+  let whereClause = 'WHERE o.is_expired = 0 AND a.status = \'active\'';
   const params: unknown[] = [100];
   
   if (category) {
-    whereClause = 'WHERE o.is_expired = 0 AND LOWER(o.category) = LOWER(?)';
+    whereClause = 'WHERE o.is_expired = 0 AND a.status = \'active\' AND LOWER(o.category) = LOWER(?)';
     params.unshift(category);
   }
   

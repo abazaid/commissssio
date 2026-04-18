@@ -28,7 +28,7 @@ export async function GET(
   }
   
   const advertisers = await query<Advertiser>(
-    'SELECT * FROM advertisers WHERE slug = $1',
+    'SELECT * FROM advertisers WHERE slug = ?',
     [slug]
   );
   

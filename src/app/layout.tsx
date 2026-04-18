@@ -1,30 +1,30 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+import Link from 'next/link';
+import './globals.css';
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "Coupons Australia | Best Deals & Discounts",
-  description: "Find the latest verified coupons, promo codes and deals from top Australian stores. Save money with Commission Factory Australia.",
+  title: 'Coupons Australia | Best Deals & Discounts',
+  description: 'Find the latest verified coupons, promo codes and deals from top Australian stores. Save money with Commission Factory Australia.',
   icons: {
-    icon: "/logo.png",
+    icon: '/logo.png',
   },
   openGraph: {
-    title: "Coupons Australia | Best Deals & Discounts",
-    description: "Find the latest verified coupons, promo codes and deals from top Australian stores.",
-    type: "website",
-    locale: "en_AU",
-    countryName: "Australia",
+    title: 'Coupons Australia | Best Deals & Discounts',
+    description: 'Find the latest verified coupons, promo codes and deals from top Australian stores.',
+    type: 'website',
+    locale: 'en_AU',
+    countryName: 'Australia',
   },
 };
 
@@ -65,12 +65,12 @@ function Footer() {
           <div style={footerColStyle}>
             <h4 style={footerTitleStyle}>Quick Links</h4>
             <Link href="/stores" style={footerLinkStyle}>All Stores</Link>
-            <Link href="/today-deals" style={footerLinkStyle}>Today's Deals</Link>
+            <Link href="/today-deals" style={footerLinkStyle}>Today&apos;s Deals</Link>
             <Link href="/best-working-coupons" style={footerLinkStyle}>Best Coupons</Link>
           </div>
         </div>
         <div style={footerBottomStyle}>
-          <p>© {new Date().getFullYear()} Coupons Australia. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Coupons Australia. All rights reserved.</p>
         </div>
       </div>
     </footer>

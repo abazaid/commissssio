@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS advertisers (
     logo_url TEXT,
     commission_rate DECIMAL(10, 4),
     avg_order_value DECIMAL(10, 2),
-    conversion_rate DECIMAL(10, 4),
-    epc DECIMAL(10, 4),
+    conversion_rate DECIMAL(10, 4) NOT NULL DEFAULT 0,
+    epc DECIMAL(10, 4) NOT NULL DEFAULT 0,
     status VARCHAR(50) DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
