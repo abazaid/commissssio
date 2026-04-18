@@ -1,12 +1,19 @@
 import mysql from 'mysql2/promise';
 import type { ExecuteValues } from 'mysql2';
 
+const isProduction = process.env.NODE_ENV === 'production';
+const rawHost = process.env.DB_HOST || (isProduction ? '127.0.0.1' : 'localhost');
+const host = rawHost === 'localhost' ? '127.0.0.1' : rawHost;
+const database = process.env.DB_NAME || 'commnision';
+const user = process.env.DB_USER || (isProduction ? '' : 'root');
+const password = process.env.DB_PASSWORD || '';
+
 const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
+  host,
   port: Number(process.env.DB_PORT) || 3306,
-  database: process.env.DB_NAME || 'commnision',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
+  database,
+  user,
+  password,
   waitForConnections: true,
   connectionLimit: 10,
 });
