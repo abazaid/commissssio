@@ -1,0 +1,13 @@
+const fs = require('fs');
+const data = JSON.parse(fs.readFileSync('./coupons.json', 'utf8'));
+const c = data[0];
+console.log('Id:', c.Id, typeof c.Id);
+console.log('Name:', c.Name, typeof c.Name);
+console.log('MerchantId:', c.MerchantId, typeof c.MerchantId);
+console.log('Description:', c.Description, typeof c.Description);
+console.log('Code:', c.Code, typeof c.Code);
+console.log('TargetUrl:', c.TargetUrl, typeof c.TargetUrl);
+console.log('TrackingUrl:', c.TrackingUrl, typeof c.TrackingUrl);
+console.log('StartDate:', c.StartDate, typeof c.StartDate);
+console.log('EndDate:', c.EndDate, typeof c.EndDate);
+console.log('Category:', c.Category, typeof c.Category);
