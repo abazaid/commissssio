@@ -23,6 +23,8 @@ interface Offer {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const category = searchParams.get('category');
+  const limitParam = Number(searchParams.get('limit') || 100);
+  const safeLimit = Number.isFinite(limitParam) ? Math.max(1, Math.min(500, Math.floor(limitParam))) : 100;
   
   const cacheKey = category ? `offers:category:${category}` : 'offers:all';
   
@@ -32,11 +34,11 @@ export async function GET(request: Request) {
   }
   
   let whereClause = 'WHERE o.is_expired = 0 AND a.status = \'active\'';
-  const params: unknown[] = [100];
+  const params: unknown[] = [];
   
   if (category) {
     whereClause = 'WHERE o.is_expired = 0 AND a.status = \'active\' AND LOWER(o.category) = LOWER(?)';
-    params.unshift(category);
+    params.push(category);
   }
   
   const offers = await query<Offer>(
@@ -45,7 +47,7 @@ export async function GET(request: Request) {
      JOIN advertisers a ON o.advertiser_id = a.id
      ${whereClause}
      ORDER BY o.created_at DESC
-     LIMIT ?`,
+     LIMIT ${safeLimit}`,
     params
   );
   

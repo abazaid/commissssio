@@ -83,7 +83,8 @@ export async function getRankedOffers(
   category?: string,
   advertiserSlug?: string
 ): Promise<OfferWithAdvertiser[]> {
-  const queryLimit = Math.max(limit * 4, 100);
+  const safeLimit = Number.isFinite(limit) ? Math.max(1, Math.floor(limit)) : 50;
+  const queryLimit = Math.max(safeLimit * 4, 100);
   const params: unknown[] = [];
   let categoryFilter = '';
   let advertiserFilter = '';
@@ -119,7 +120,7 @@ export async function getRankedOffers(
     ORDER BY 
       o.created_at DESC,
       COALESCE(c.clicks, 0) DESC
-    LIMIT ?`,
+    LIMIT ${queryLimit}`,
     params
   );
   
@@ -135,7 +136,7 @@ export async function getRankedOffers(
       if (!!a.coupon_code !== !!b.coupon_code) return a.coupon_code ? -1 : 1;
       return (b.clicks_count || 0) - (a.clicks_count || 0);
     })
-    .slice(0, limit);
+    .slice(0, safeLimit);
 }
 
 export async function getTopDeals(limit = 20): Promise<OfferWithAdvertiser[]> {
@@ -143,6 +144,7 @@ export async function getTopDeals(limit = 20): Promise<OfferWithAdvertiser[]> {
 }
 
 export async function getVerifiedCoupons(limit = 50): Promise<OfferWithAdvertiser[]> {
+  const safeLimit = Number.isFinite(limit) ? Math.max(1, Math.floor(limit)) : 50;
   const offers = await query<OfferWithAdvertiser>(
     `SELECT 
       o.id, o.title, o.description, o.coupon_code, o.destination_url, o.tracking_url,
@@ -157,8 +159,7 @@ export async function getVerifiedCoupons(limit = 50): Promise<OfferWithAdvertise
     WHERE o.is_expired = 0 AND o.is_verified = 1 AND o.coupon_code IS NOT NULL AND a.status = 'active'
     GROUP BY o.id, a.id, c.clicks
     ORDER BY COALESCE(c.clicks, 0) DESC, o.id DESC
-    LIMIT ?`,
-    [limit]
+    LIMIT ${safeLimit}`
   );
   
   return offers;
