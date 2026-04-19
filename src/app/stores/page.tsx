@@ -24,9 +24,8 @@ export default async function StoresPage() {
     name: string;
     slug: string;
     logo_url: string | null;
-    commission_rate: number | null;
   }>(
-    `SELECT id, name, slug, logo_url, commission_rate
+    `SELECT id, name, slug, logo_url
      FROM advertisers
      WHERE status = 'active' AND logo_url IS NOT NULL
      ORDER BY name`
@@ -63,9 +62,6 @@ export default async function StoresPage() {
               <img src={store.logo_url} alt={store.name} />
             )}
             <span>{store.name}</span>
-            {store.commission_rate && (
-              <small>{store.commission_rate}% partner rate</small>
-            )}
           </Link>
         ))}
       </div>
