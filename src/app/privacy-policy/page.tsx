@@ -35,6 +35,10 @@ export default function PrivacyPolicyPage() {
       <p>
         Aussie Dealz may receive a commission when you purchase through links on our website. This does not affect editorial independence.
       </p>
+      <p>
+        We participate in affiliate programs including Commission Factory (publisher ID: 49343). Some outbound links may route through affiliate
+        tracking domains such as <code>t.cfjump.com</code> to attribute commissions.
+      </p>
       <h2>Your Rights</h2>
       <p>
         You may contact us to request access, correction, or deletion of personal information we hold where legally applicable.

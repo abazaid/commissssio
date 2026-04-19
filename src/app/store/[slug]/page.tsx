@@ -5,7 +5,7 @@ import { getRankedOffers } from '@/lib/ranking';
 import Link from 'next/link';
 import styles from '@/app/page.module.css';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 1800;
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -261,3 +261,4 @@ export default async function StorePage({ params }: Props) {
     </main>
   );
 }
+

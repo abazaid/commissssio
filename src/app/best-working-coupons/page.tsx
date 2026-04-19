@@ -3,7 +3,7 @@ import { getVerifiedCoupons } from '@/lib/ranking';
 import Link from 'next/link';
 import styles from '@/app/page.module.css';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 1800;
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -59,3 +59,4 @@ export default async function BestCouponsPage() {
     </main>
   );
 }
+

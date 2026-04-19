@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { getCategoryData } from '@/lib/category';
 import styles from '@/app/page.module.css';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 1800;
 
 export const metadata: Metadata = {
   title: 'Fashion Coupons Australia - Verified Promo Codes',
@@ -90,3 +90,4 @@ export default async function FashionCouponsPage() {
     </main>
   );
 }
+
