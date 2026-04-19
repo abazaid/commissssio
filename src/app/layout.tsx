@@ -17,7 +17,11 @@ export const metadata: Metadata = {
   title: 'Coupons Australia | Best Deals & Discounts',
   description: 'Find the latest verified coupons, promo codes and deals from top Australian stores. Save money with Commission Factory Australia.',
   icons: {
-    icon: '/logo.png',
+    icon: [
+      { url: '/logo.png', type: 'image/png' },
+    ],
+    shortcut: '/logo.png',
+    apple: '/logo.png',
   },
   openGraph: {
     title: 'Coupons Australia | Best Deals & Discounts',
@@ -102,8 +106,9 @@ const logoLinkStyle: React.CSSProperties = {
 };
 
 const logoStyle: React.CSSProperties = {
-  height: '40px',
-  width: 'auto',
+  width: '220px',
+  height: '56px',
+  objectFit: 'contain',
 };
 
 const navLinksStyle: React.CSSProperties = {
@@ -136,7 +141,9 @@ const footerLogoStyle: React.CSSProperties = {
 };
 
 const footerLogoImgStyle: React.CSSProperties = {
-  height: '30px',
+  width: '200px',
+  height: '52px',
+  objectFit: 'contain',
   marginBottom: '12px',
 };
 
