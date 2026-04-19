@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { query } from '@/lib/db';
+import { blogPosts } from '@/lib/blog';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aussiedealz.com';
 
@@ -30,6 +31,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: path === '/' ? 1 : 0.7,
   }));
 
+  const blogRoutes: MetadataRoute.Sitemap = blogPosts.map((post) => ({
+    url: `${siteUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.updatedAt),
+    changeFrequency: 'weekly',
+    priority: 0.75,
+  }));
+
   try {
     const stores = await query<{ slug: string; updated_at?: Date }>(
       "SELECT slug, updated_at FROM advertisers WHERE status = 'active' ORDER BY id DESC LIMIT 5000"
@@ -42,9 +50,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }));
 
-    return [...staticRoutes, ...storeRoutes];
+    return [...staticRoutes, ...blogRoutes, ...storeRoutes];
   } catch {
-    return staticRoutes;
+    return [...staticRoutes, ...blogRoutes];
   }
 }
 

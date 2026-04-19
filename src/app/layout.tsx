@@ -240,9 +240,23 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const organizationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Aussie Dealz',
+    url: siteUrl,
+    logo: `${siteUrl}/logo.png`,
+    sameAs: [
+      process.env.NEXT_PUBLIC_BRAND_LINKEDIN || 'https://www.linkedin.com/company/aussiedealz',
+      process.env.NEXT_PUBLIC_BRAND_X || 'https://x.com/aussiedealz',
+      process.env.NEXT_PUBLIC_BRAND_GITHUB || 'https://github.com/abazaid/commissssio',
+    ],
+  };
+
   return (
     <html lang="en-AU" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
         <Navbar />
         {children}
         <Footer />

@@ -18,6 +18,32 @@ export const metadata: Metadata = {
 
 export default async function BeautyCouponsPage() {
   const { offers, stores } = await getCategoryData('beauty');
+  const today = new Date().toISOString().split('T')[0];
+  const parseDiscount = (text: string) => {
+    const match = text.match(/(\d{1,2}(?:\.\d+)?)\s?%/);
+    return match ? Number(match[1]) : null;
+  };
+  const summaryRows = stores.slice(0, 10).map((store) => {
+    const storeOffers = offers.filter((offer) => offer.advertiser_id === store.id);
+    const activeCodes = storeOffers.filter((offer) => !!offer.coupon_code).length;
+    const discounts = storeOffers
+      .map((offer) => parseDiscount(offer.title))
+      .filter((value): value is number => value !== null);
+    const averageDiscount = discounts.length > 0
+      ? `${(discounts.reduce((sum, value) => sum + value, 0) / discounts.length).toFixed(1)}%`
+      : 'N/A';
+    const latestTimestamp = storeOffers
+      .map((offer) => (offer.created_at ? new Date(offer.created_at).getTime() : 0))
+      .sort((a, b) => b - a)[0];
+    const lastUpdated = latestTimestamp ? new Date(latestTimestamp).toISOString().split('T')[0] : today;
+
+    return {
+      name: store.name,
+      averageDiscount,
+      activeCodes,
+      lastUpdated,
+    };
+  });
 
   return (
     <main className={styles.main}>
@@ -49,6 +75,33 @@ export default async function BeautyCouponsPage() {
               <span>{store.name}</span>
             </Link>
           )) : <p>Store list is updating. Check back shortly.</p>}
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2>Top Verified Beauty Stores Comparison</h2>
+        <p>Snapshot of active beauty store promotions, code availability, and freshness.</p>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff' }}>
+            <thead>
+              <tr>
+                <th style={{ textAlign: 'left', padding: '10px', borderBottom: '1px solid #ddd' }}>Store</th>
+                <th style={{ textAlign: 'left', padding: '10px', borderBottom: '1px solid #ddd' }}>Average Discount</th>
+                <th style={{ textAlign: 'left', padding: '10px', borderBottom: '1px solid #ddd' }}>Active Codes</th>
+                <th style={{ textAlign: 'left', padding: '10px', borderBottom: '1px solid #ddd' }}>Last Updated</th>
+              </tr>
+            </thead>
+            <tbody>
+              {summaryRows.map((row, index) => (
+                <tr key={`${row.name}-${index}`}>
+                  <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>{row.name}</td>
+                  <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>{row.averageDiscount}</td>
+                  <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>{row.activeCodes}</td>
+                  <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>{row.lastUpdated}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 

@@ -15,6 +15,11 @@ export default function AboutPage() {
         '@type': 'Organization',
         name: 'Aussie Dealz',
         url: 'https://aussiedealz.com',
+        sameAs: [
+          process.env.NEXT_PUBLIC_BRAND_LINKEDIN || 'https://www.linkedin.com/company/aussiedealz',
+          process.env.NEXT_PUBLIC_BRAND_X || 'https://x.com/aussiedealz',
+          process.env.NEXT_PUBLIC_BRAND_GITHUB || 'https://github.com/abazaid/commissssio',
+        ],
       },
       {
         '@type': 'Person',

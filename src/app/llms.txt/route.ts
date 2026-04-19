@@ -9,6 +9,9 @@ const body = `# Aussie Dealz
 - https://aussiedealz.com/today-deals - Today's best deals
 - https://aussiedealz.com/best-working-coupons - Best verified codes
 - https://aussiedealz.com/blog - Editorial savings guides
+- https://aussiedealz.com/blog/best-deals-this-week - Weekly roundup
+- https://aussiedealz.com/blog/how-to-check-if-a-coupon-is-real - Coupon validation guide
+- https://aussiedealz.com/blog/australian-retail-sale-calendar - Retail sale calendar reference
 - https://aussiedealz.com/methodology - Verification standards
 - https://aussiedealz.com/authors/sarah-mitchell - Deals editor profile
 

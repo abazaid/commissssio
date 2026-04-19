@@ -1,5 +1,6 @@
 import { query, execute } from './db';
 import { cacheDelete } from './redis';
+import { submitIndexNow } from './indexnow';
 import slugify from 'slug';
 
 type Merchant = {
@@ -122,6 +123,7 @@ async function syncAdvertisers() {
 
 async function syncOffers() {
   console.log('Syncing offers...');
+  const changedPaths = new Set<string>();
 
   try {
     const coupons = await fetchAffiliate<Coupon>('Coupons', 'Coupons');
@@ -130,14 +132,15 @@ async function syncOffers() {
     for (const offer of coupons) {
       if (!offer.MerchantId || !offer.TargetUrl || !offer.TrackingUrl) continue;
 
-      const advertiserResult = await query<{ id: number }>(
-        'SELECT id FROM advertisers WHERE external_id = ?',
+      const advertiserResult = await query<{ id: number; slug: string }>(
+        'SELECT id, slug FROM advertisers WHERE external_id = ?',
         [String(offer.MerchantId)]
       );
 
       if (advertiserResult.length === 0) continue;
 
       const advertiserId = advertiserResult[0].id;
+      const advertiserSlug = advertiserResult[0].slug;
       const endDate = offer.EndDate ? new Date(offer.EndDate) : null;
       const isExpired = endDate ? endDate < new Date() : false;
       const title = offer.Description || offer.Code || 'Coupon';
@@ -174,11 +177,21 @@ async function syncOffers() {
       );
 
       imported++;
+      if (advertiserSlug) changedPaths.add(`/store/${advertiserSlug}`);
     }
 
     console.log(`Synced ${imported} offers`);
     await cacheDelete('offers:all');
     await cacheDelete('top-deals');
+    if (imported > 0) {
+      await submitIndexNow([
+        '/',
+        '/today-deals',
+        '/best-working-coupons',
+        '/stores',
+        ...Array.from(changedPaths),
+      ]);
+    }
   } catch (error) {
     console.error('Error syncing offers:', error);
   }
@@ -236,6 +249,7 @@ async function syncCreatives() {
 
 async function syncPromotionsAsOffers() {
   console.log('Syncing promotions...');
+  const changedPaths = new Set<string>();
 
   try {
     const promotions = await fetchAffiliate<Promotion>('Promotions', 'Promotions');
@@ -244,14 +258,15 @@ async function syncPromotionsAsOffers() {
     for (const promo of promotions) {
       if (!promo.MerchantId || !promo.TargetUrl || !promo.TrackingUrl) continue;
 
-      const advertiserResult = await query<{ id: number }>(
-        'SELECT id FROM advertisers WHERE external_id = ?',
+      const advertiserResult = await query<{ id: number; slug: string }>(
+        'SELECT id, slug FROM advertisers WHERE external_id = ?',
         [String(promo.MerchantId)]
       );
 
       if (advertiserResult.length === 0) continue;
 
       const advertiserId = advertiserResult[0].id;
+      const advertiserSlug = advertiserResult[0].slug;
       const endDate = promo.EndDate ? new Date(promo.EndDate) : null;
       const isExpired = endDate ? endDate < new Date() : false;
       const title = promo.Description || 'Promotion';
@@ -287,9 +302,18 @@ async function syncPromotionsAsOffers() {
       );
 
       imported++;
+      if (advertiserSlug) changedPaths.add(`/store/${advertiserSlug}`);
     }
 
     console.log(`Synced ${imported} promotions`);
+    if (imported > 0) {
+      await submitIndexNow([
+        '/',
+        '/today-deals',
+        '/stores',
+        ...Array.from(changedPaths),
+      ]);
+    }
   } catch (error) {
     console.error('Error syncing promotions:', error);
   }

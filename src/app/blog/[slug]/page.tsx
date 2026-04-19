@@ -45,20 +45,29 @@ export default async function BlogPostPage({ params }: Props) {
 
   const articleSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': 'BlogPosting',
     headline: post.title,
     description: post.description,
     datePublished: post.publishedAt,
     dateModified: post.updatedAt,
+    keywords: ['Australia coupons', 'discount code', post.category, 'Aussie Dealz'],
     author: {
       '@type': 'Person',
       name: BLOG_AUTHOR.name,
       url: `https://aussiedealz.com/authors/${BLOG_AUTHOR.slug}`,
+      sameAs: [
+        process.env.NEXT_PUBLIC_EDITOR_LINKEDIN || 'https://www.linkedin.com/company/aussiedealz',
+        process.env.NEXT_PUBLIC_EDITOR_X || 'https://x.com/aussiedealz',
+      ],
     },
     publisher: {
       '@type': 'Organization',
       name: 'Aussie Dealz',
       logo: { '@type': 'ImageObject', url: 'https://aussiedealz.com/logo.png' },
+      sameAs: [
+        process.env.NEXT_PUBLIC_BRAND_LINKEDIN || 'https://www.linkedin.com/company/aussiedealz',
+        process.env.NEXT_PUBLIC_BRAND_X || 'https://x.com/aussiedealz',
+      ],
     },
     mainEntityOfPage: `https://aussiedealz.com/blog/${post.slug}`,
   };
