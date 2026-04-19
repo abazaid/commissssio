@@ -21,6 +21,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/privacy-policy',
     '/terms',
     '/blog',
+    '/methodology',
+    '/authors/sarah-mitchell',
   ].map((path) => ({
     url: `${siteUrl}${path}`,
     lastModified: now,
@@ -45,3 +47,4 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return staticRoutes;
   }
 }
+

@@ -16,6 +16,9 @@ export default function ContactPage() {
       <p>
         Email: <a href="mailto:hello@aussiedealz.com">hello@aussiedealz.com</a>
       </p>
+      <p>
+        Editorial Office: Sydney, NSW, Australia
+      </p>
       <h2>Support Form</h2>
       <form action="mailto:hello@aussiedealz.com" method="post" encType="text/plain" style={{ display: 'grid', gap: 12, maxWidth: 620 }}>
         <input name="name" placeholder="Your name" required style={{ padding: 12 }} />

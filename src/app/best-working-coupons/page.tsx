@@ -20,6 +20,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function BestCouponsPage() {
   const coupons = await getVerifiedCoupons(50);
+  const generatedAt = new Date().toISOString().split('T')[0];
+  const formatDate = (value?: Date | string | null) =>
+    value ? new Date(value).toISOString().split('T')[0] : null;
 
   const listSchema = {
     '@context': 'https://schema.org',
@@ -42,6 +45,7 @@ export default async function BestCouponsPage() {
       </section>
 
       <section className={styles.section}>
+        <p>Last updated: {generatedAt}</p>
         <div className={styles.grid}>
           {coupons.map((coupon) => (
             <Link
@@ -51,6 +55,7 @@ export default async function BestCouponsPage() {
             >
               <h3>{coupon.title}</h3>
               <p>{coupon.advertiser_name}</p>
+              {formatDate(coupon.created_at) && <p>Updated: {formatDate(coupon.created_at)}</p>}
               <span className={styles.couponCode}>{coupon.coupon_code}</span>
             </Link>
           ))}

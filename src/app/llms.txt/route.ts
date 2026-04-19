@@ -9,6 +9,8 @@ const body = `# Aussie Dealz
 - https://aussiedealz.com/today-deals - Today's best deals
 - https://aussiedealz.com/best-working-coupons - Best verified codes
 - https://aussiedealz.com/blog - Editorial savings guides
+- https://aussiedealz.com/methodology - Verification standards
+- https://aussiedealz.com/authors/sarah-mitchell - Deals editor profile
 
 ## Store Pages
 - Pattern: https://aussiedealz.com/store/[store-name]
@@ -23,3 +25,4 @@ export function GET() {
     },
   });
 }
+

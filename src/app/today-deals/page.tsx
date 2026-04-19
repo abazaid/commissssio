@@ -20,6 +20,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function TodayDealsPage() {
   const deals = await getTopDeals(50);
+  const generatedAt = new Date().toISOString().split('T')[0];
+  const formatDate = (value?: Date | string | null) =>
+    value ? new Date(value).toISOString().split('T')[0] : null;
 
   const listSchema = {
     '@context': 'https://schema.org',
@@ -42,6 +45,7 @@ export default async function TodayDealsPage() {
       </section>
 
       <section className={styles.section}>
+        <p>Last updated: {generatedAt}</p>
         <div className={styles.grid}>
           {deals.map((deal) => (
             <Link
@@ -54,6 +58,7 @@ export default async function TodayDealsPage() {
               )}
               <h3>{deal.title}</h3>
               <p>{deal.advertiser_name}</p>
+              {formatDate(deal.created_at) && <p>Updated: {formatDate(deal.created_at)}</p>}
               {deal.coupon_code && (
                 <span className={styles.couponCode}>{deal.coupon_code}</span>
               )}

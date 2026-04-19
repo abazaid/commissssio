@@ -111,6 +111,8 @@ function Footer() {
           <div style={footerColStyle}>
             <h4 style={footerTitleStyle}>Company</h4>
             <Link href="/about" style={footerLinkStyle}>About</Link>
+            <Link href="/methodology" style={footerLinkStyle}>Methodology</Link>
+            <Link href="/authors/sarah-mitchell" style={footerLinkStyle}>Author Profile</Link>
             <Link href="/contact" style={footerLinkStyle}>Contact</Link>
             <Link href="/privacy-policy" style={footerLinkStyle}>Privacy Policy</Link>
             <Link href="/terms" style={footerLinkStyle}>Terms</Link>
