@@ -54,7 +54,7 @@ async function syncMerchants() {
            name=VALUES(name), slug=VALUES(slug), logo_url=VALUES(logo_url), 
            commission_rate=VALUES(commission_rate), conversion_rate=VALUES(conversion_rate), 
            epc=VALUES(epc), status=VALUES(status), updated_at=NOW()`,
-        [String(m.Id), m.Name, slug, m.AvatarUrl||null, m.CommissionRate||null, null, null, status]
+        [String(m.Id), m.Name, slug, m.AvatarUrl || null, m.CommissionRate || null, 0, 0, status]
       );
       imported++;
     }
