@@ -7,8 +7,14 @@ export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: 'All Stores | Australian Coupons',
-    description: 'Browse all stores offering coupons and deals in Australia.',
+    title: 'All Stores Directory Australia',
+    description: 'Browse active Australian stores with verified coupons, promo codes, and daily offers on Aussie Dealz.',
+    alternates: { canonical: '/stores' },
+    openGraph: {
+      title: 'All Stores Directory Australia',
+      description: 'Browse active Australian stores with verified coupons and offers.',
+      url: '/stores',
+    },
   };
 }
 
@@ -20,14 +26,27 @@ export default async function StoresPage() {
     logo_url: string | null;
     commission_rate: number | null;
   }>(
-    `SELECT id, name, slug, logo_url, commission_rate 
-     FROM advertisers 
-     WHERE status = 'active' AND logo_url IS NOT NULL 
+    `SELECT id, name, slug, logo_url, commission_rate
+     FROM advertisers
+     WHERE status = 'active' AND logo_url IS NOT NULL
      ORDER BY name`
   );
 
+  const listSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Australian store directory',
+    itemListElement: stores.slice(0, 200).map((store, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: `https://aussiedealz.com/store/${store.slug}`,
+      name: store.name,
+    })),
+  };
+
   return (
     <main className={styles.main}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(listSchema) }} />
       <section className={styles.hero}>
         <h1>All Stores</h1>
         <p>Browse {stores.length} stores with coupons and deals</p>
@@ -45,7 +64,7 @@ export default async function StoresPage() {
             )}
             <span>{store.name}</span>
             {store.commission_rate && (
-              <small>{store.commission_rate}% commission</small>
+              <small>{store.commission_rate}% partner rate</small>
             )}
           </Link>
         ))}

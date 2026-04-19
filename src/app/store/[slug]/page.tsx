@@ -29,11 +29,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { month, year } = getCurrentDate();
 
   return {
-    title: `${store.name} Discount Codes & Coupons Australia - ${month} ${year}`,
+    title: `${store.name} Discount Codes Australia - ${month} ${year}`,
     description: `Find the latest verified ${store.name} coupons and deals. Save money with verified promo codes from ${store.name} Australia. Up to 70% off.`,
     keywords: `${store.name} coupon, ${store.name} promo code, ${store.name} discount, ${store.name} Australia deals`,
+    alternates: { canonical: `/store/${slug}` },
     openGraph: {
-      title: `${store.name} Coupons | Exclusive Deals Australia`,
+      title: `${store.name} Coupons Australia | Aussie Dealz`,
+      description: `Get the best ${store.name} coupons and deals in Australia.`,
+      url: `/store/${slug}`,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${store.name} Coupons Australia`,
       description: `Get the best ${store.name} coupons and deals in Australia.`,
     },
   };
@@ -68,14 +75,72 @@ export default async function StorePage({ params }: Props) {
 
   const featuredBanner = creatives[0];
   const carouselBanners = creatives.slice(1, 8);
+  const lastVerified = new Date().toISOString().split('T')[0];
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://aussiedealz.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Stores', item: 'https://aussiedealz.com/stores' },
+      { '@type': 'ListItem', position: 3, name: store.name, item: `https://aussiedealz.com/store/${slug}` },
+    ],
+  };
+
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: `How do I use a ${store.name} coupon code?`,
+        acceptedAnswer: { '@type': 'Answer', text: `Click GET CODE, copy the code, and paste it at checkout on ${store.name}.` },
+      },
+      {
+        '@type': 'Question',
+        name: `Are these ${store.name} coupons verified?`,
+        acceptedAnswer: { '@type': 'Answer', text: 'Yes. Verified coupons are reviewed and updated regularly by the Aussie Dealz team.' },
+      },
+      {
+        '@type': 'Question',
+        name: `Can I combine ${store.name} discount codes?`,
+        acceptedAnswer: { '@type': 'Answer', text: 'Most stores allow one code per order. Compare offers to find the best savings outcome.' },
+      },
+    ],
+  };
+
+  const itemListSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `${store.name} offers`,
+    itemListElement: storeOffers.slice(0, 15).map((offer, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'Offer',
+        name: offer.title,
+        url: `https://aussiedealz.com/api/click?offer_id=${offer.id}&sub_id=store_${slug}_${offer.id}`,
+        priceCurrency: 'AUD',
+        availability: offer.is_expired ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+        seller: {
+          '@type': 'Organization',
+          name: store.name,
+        },
+      },
+    })),
+  };
 
   return (
     <main className={styles.main}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
       <section className={styles.storeHero}>
         {store.logo_url && <img src={store.logo_url} alt={store.name} className={styles.storeLogo} />}
         <div className={styles.storeHeroText}>
           <h1>{store.name} Discount Codes & Coupons Australia - {month} {year}</h1>
           <p>Find the latest verified {store.name} coupons and promo codes. Save money with exclusive discounts from {store.name} Australia.</p>
+          <p>Last verified: {lastVerified}</p>
         </div>
       </section>
 

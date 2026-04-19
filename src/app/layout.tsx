@@ -13,22 +13,60 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aussiedealz.com';
+
 export const metadata: Metadata = {
-  title: 'Coupons Australia | Best Deals & Discounts',
-  description: 'Find the latest verified coupons, promo codes and deals from top Australian stores. Save money with Commission Factory Australia.',
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: 'Aussie Dealz | Verified Coupons & Promo Codes Australia',
+    template: '%s | Aussie Dealz',
+  },
+  description:
+    'Aussie Dealz helps Australians save with verified promo codes, coupons, and daily deals from top local retailers.',
+  keywords: [
+    'Aussie Dealz',
+    'Australia coupons',
+    'promo code australia',
+    'discount codes',
+    'verified deals',
+  ],
+  alternates: {
+    canonical: '/',
+    languages: {
+      'en-AU': '/',
+      'x-default': '/',
+    },
+  },
+  authors: [{ name: 'Sarah Mitchell', url: `${siteUrl}/about` }],
+  creator: 'Aussie Dealz Editorial Team',
+  publisher: 'Aussie Dealz',
   icons: {
-    icon: [
-      { url: '/logo.png', type: 'image/png' },
-    ],
+    icon: [{ url: '/logo.png', type: 'image/png' }],
     shortcut: '/logo.png',
     apple: '/logo.png',
   },
   openGraph: {
-    title: 'Coupons Australia | Best Deals & Discounts',
-    description: 'Find the latest verified coupons, promo codes and deals from top Australian stores.',
-    type: 'website',
+    title: 'Aussie Dealz | Verified Coupons & Promo Codes Australia',
+    description:
+      'Find working Australian discount codes and daily verified deals from hundreds of local stores.',
+    url: siteUrl,
+    siteName: 'Aussie Dealz',
     locale: 'en_AU',
-    countryName: 'Australia',
+    type: 'website',
+    images: [
+      {
+        url: '/logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'Aussie Dealz',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Aussie Dealz | Verified Coupons & Promo Codes Australia',
+    description: 'Save money with verified Australian coupons and promo codes.',
+    images: ['/logo.png'],
   },
 };
 
@@ -37,7 +75,7 @@ function Navbar() {
     <nav style={navStyle}>
       <div style={navContainerStyle}>
         <Link href="/" style={logoLinkStyle}>
-          <img src="/logo.png" alt="Coupons Australia" style={logoStyle} />
+          <img src="/logo.png" alt="Aussie Dealz" style={logoStyle} />
         </Link>
         <div style={navLinksStyle}>
           <Link href="/" style={navLinkStyle}>Home</Link>
@@ -45,6 +83,7 @@ function Navbar() {
           <Link href="/fashion-coupons" style={navLinkStyle}>Fashion</Link>
           <Link href="/beauty-coupons" style={navLinkStyle}>Beauty</Link>
           <Link href="/electronics-coupons" style={navLinkStyle}>Electronics</Link>
+          <Link href="/blog" style={navLinkStyle}>Blog</Link>
         </div>
       </div>
     </nav>
@@ -56,8 +95,10 @@ function Footer() {
     <footer style={footerStyle}>
       <div style={footerContainerStyle}>
         <div style={footerLogoStyle}>
-          <img src="/logo.png" alt="Coupons Australia" style={footerLogoImgStyle} />
-          <p style={footerTextStyle}>Save money with verified coupons from top Australian stores.</p>
+          <img src="/logo.png" alt="Aussie Dealz" style={footerLogoImgStyle} />
+          <p style={footerTextStyle}>
+            Aussie Dealz earns a commission when you purchase through our links. This does not affect our editorial independence.
+          </p>
         </div>
         <div style={footerLinksStyle}>
           <div style={footerColStyle}>
@@ -65,16 +106,19 @@ function Footer() {
             <Link href="/fashion-coupons" style={footerLinkStyle}>Fashion</Link>
             <Link href="/beauty-coupons" style={footerLinkStyle}>Beauty</Link>
             <Link href="/electronics-coupons" style={footerLinkStyle}>Electronics</Link>
+            <Link href="/home-coupons" style={footerLinkStyle}>Home & Garden</Link>
           </div>
           <div style={footerColStyle}>
-            <h4 style={footerTitleStyle}>Quick Links</h4>
-            <Link href="/stores" style={footerLinkStyle}>All Stores</Link>
-            <Link href="/today-deals" style={footerLinkStyle}>Today&apos;s Deals</Link>
-            <Link href="/best-working-coupons" style={footerLinkStyle}>Best Coupons</Link>
+            <h4 style={footerTitleStyle}>Company</h4>
+            <Link href="/about" style={footerLinkStyle}>About</Link>
+            <Link href="/contact" style={footerLinkStyle}>Contact</Link>
+            <Link href="/privacy-policy" style={footerLinkStyle}>Privacy Policy</Link>
+            <Link href="/terms" style={footerLinkStyle}>Terms</Link>
+            <Link href="/blog" style={footerLinkStyle}>Blog</Link>
           </div>
         </div>
         <div style={footerBottomStyle}>
-          <p>&copy; {new Date().getFullYear()} Coupons Australia. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Aussie Dealz. All rights reserved.</p>
         </div>
       </div>
     </footer>
@@ -113,7 +157,9 @@ const logoStyle: React.CSSProperties = {
 
 const navLinksStyle: React.CSSProperties = {
   display: 'flex',
-  gap: '24px',
+  gap: '18px',
+  flexWrap: 'wrap',
+  justifyContent: 'flex-end',
 };
 
 const navLinkStyle: React.CSSProperties = {
@@ -148,14 +194,17 @@ const footerLogoImgStyle: React.CSSProperties = {
 };
 
 const footerTextStyle: React.CSSProperties = {
-  color: '#999',
+  color: '#c2c2c2',
   fontSize: '14px',
+  lineHeight: 1.6,
+  maxWidth: '760px',
 };
 
 const footerLinksStyle: React.CSSProperties = {
   display: 'flex',
   gap: '60px',
   marginBottom: '40px',
+  flexWrap: 'wrap',
 };
 
 const footerColStyle: React.CSSProperties = {
@@ -171,7 +220,7 @@ const footerTitleStyle: React.CSSProperties = {
 };
 
 const footerLinkStyle: React.CSSProperties = {
-  color: '#999',
+  color: '#b5b5b5',
   textDecoration: 'none',
   fontSize: '14px',
 };
@@ -180,7 +229,7 @@ const footerBottomStyle: React.CSSProperties = {
   borderTop: '1px solid #333',
   paddingTop: '20px',
   textAlign: 'center',
-  color: '#666',
+  color: '#888',
   fontSize: '14px',
 };
 
@@ -190,7 +239,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en-AU" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
         <Navbar />
         {children}

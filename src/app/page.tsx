@@ -8,13 +8,20 @@ export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: 'Australian Coupons & Deals | Verified Promo Codes 2026',
-    description: 'Save money with verified coupons and exclusive deals from top Australian stores. Up to 70% off fashion, beauty, electronics and more.',
-    keywords: 'australia coupons, promo codes, discounts, deals, save money',
+    title: 'Aussie Dealz - Verified Coupons & Deals Australia',
+    description: 'Save money with verified Australian promo codes and daily deals from top local stores.',
+    keywords: 'australia coupons, promo codes, discounts, deals, aussie dealz',
+    alternates: { canonical: '/' },
     openGraph: {
-      title: 'Australian Coupons & Deals | Verified Promo Codes',
+      title: 'Aussie Dealz - Verified Coupons & Deals Australia',
       description: 'Save money with verified coupons from top Australian stores.',
       type: 'website',
+      url: '/',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Aussie Dealz - Verified Coupons & Deals Australia',
+      description: 'Save money with verified coupons from top Australian stores.',
     },
   };
 }
@@ -73,10 +80,34 @@ export default async function Home() {
     { slug: 'food', name: 'Food & Dining' },
   ];
 
+  const schema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Organization',
+        name: 'Aussie Dealz',
+        url: 'https://aussiedealz.com',
+        logo: 'https://aussiedealz.com/logo.png',
+        contactPoint: [{ '@type': 'ContactPoint', contactType: 'customer support', email: 'hello@aussiedealz.com' }],
+      },
+      {
+        '@type': 'WebSite',
+        name: 'Aussie Dealz',
+        url: 'https://aussiedealz.com',
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: 'https://aussiedealz.com/search?q={search_term_string}',
+          'query-input': 'required name=search_term_string',
+        },
+      },
+    ],
+  };
+
   return (
     <main className={styles.main}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <section className={styles.hero}>
-        <h1>Australian Coupons & Deals</h1>
+        <h1>Aussie Dealz: Australian Coupons & Deals</h1>
         <p>Save money with verified coupons from top stores in Australia</p>
 
         <form action="/search" method="GET" className={styles.searchForm}>

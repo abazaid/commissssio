@@ -7,16 +7,35 @@ export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: 'Best Working Coupons Australia | Verified Promo Codes',
-    description: 'Find verified, working promo codes from top Australian stores. All coupons tested and working.',
+    title: 'Best Working Coupons Australia',
+    description: 'Find verified and currently working promo codes from Australian stores.',
+    alternates: { canonical: '/best-working-coupons' },
+    openGraph: {
+      title: 'Best Working Coupons Australia',
+      description: 'Verified promo codes from Australian stores.',
+      url: '/best-working-coupons',
+    },
   };
 }
 
 export default async function BestCouponsPage() {
   const coupons = await getVerifiedCoupons(50);
 
+  const listSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Best working coupons',
+    itemListElement: coupons.slice(0, 20).map((coupon, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: `https://aussiedealz.com/store/${coupon.advertiser_slug}`,
+      name: coupon.title,
+    })),
+  };
+
   return (
     <main className={styles.main}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(listSchema) }} />
       <section className={styles.hero}>
         <h1>Best Working Coupons Australia</h1>
         <p>Verified promo codes that actually work</p>

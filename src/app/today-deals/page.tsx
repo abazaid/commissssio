@@ -7,16 +7,35 @@ export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Today's Best Deals Australia | Top Discounts",
-    description: "Today&apos;s hottest deals from Australian stores. Save big with exclusive discounts and limited time offers.",
+    title: 'Today\'s Best Deals Australia',
+    description: 'Today\'s hottest verified deals from Australian stores. Updated frequently by Aussie Dealz.',
+    alternates: { canonical: '/today-deals' },
+    openGraph: {
+      title: 'Today\'s Best Deals Australia',
+      description: 'Today\'s hottest verified deals from Australian stores.',
+      url: '/today-deals',
+    },
   };
 }
 
 export default async function TodayDealsPage() {
   const deals = await getTopDeals(50);
 
+  const listSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Today\'s deals',
+    itemListElement: deals.slice(0, 20).map((deal, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: `https://aussiedealz.com/store/${deal.advertiser_slug}`,
+      name: deal.title,
+    })),
+  };
+
   return (
     <main className={styles.main}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(listSchema) }} />
       <section className={styles.hero}>
         <h1>Today&apos;s Best Deals Australia</h1>
         <p>Hottest deals and biggest discounts available now</p>

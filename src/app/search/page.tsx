@@ -13,8 +13,14 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const queryText = q || '';
 
   return {
-    title: queryText ? `Search: ${queryText} | Australian Coupons` : 'Search Coupons',
+    title: queryText ? `Search: ${queryText} | Aussie Dealz` : 'Search Coupons',
     description: `Search for ${queryText} coupons and deals in Australia.`,
+    alternates: { canonical: queryText ? `/search?q=${encodeURIComponent(queryText)}` : '/search' },
+    openGraph: {
+      title: queryText ? `Search results for ${queryText}` : 'Search coupons',
+      description: `Search for ${queryText} coupons and deals in Australia.`,
+      url: queryText ? `/search?q=${encodeURIComponent(queryText)}` : '/search',
+    },
   };
 }
 
