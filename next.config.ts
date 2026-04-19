@@ -18,6 +18,16 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.aussiedealz.com" }],
+        destination: "https://aussiedealz.com/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
