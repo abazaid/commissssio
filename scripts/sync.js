@@ -12,6 +12,8 @@ function slugify(text) {
 const CF_API_KEY = process.env.CF_API_KEY;
 const CF_BASE_URL = (process.env.CF_BASE_URL || 'https://api.commissionfactory.com').replace(/\/$/, '');
 const BASE_URL = `${CF_BASE_URL}/V1/Affiliate`;
+const MAX_COUPONS = Number(process.env.SYNC_MAX_COUPONS || 2000);
+const MAX_PROMOTIONS = Number(process.env.SYNC_MAX_PROMOTIONS || 2000);
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST || '127.0.0.1',
@@ -74,7 +76,7 @@ async function syncCoupons() {
     let imported = 0;
 for (const c of coupons) {
       if (!c.MerchantId) continue;
-      if (imported > 500) break;
+      if (imported >= MAX_COUPONS) break;
       const title = c.Description || c.Code || 'Coupon';
       const [rows] = await pool.execute('SELECT id FROM advertisers WHERE external_id = ?', [String(c.MerchantId)]);
       if (rows.length === 0) continue;
@@ -150,10 +152,9 @@ async function syncPromotions() {
     console.log(`Found ${promotions.length} promotions`);
     
     let imported = 0;
-    let pi = 0;
   for (const p of promotions) {
-      pi++;
-      if (!p.MerchantId || !p.Description || pi > 500) continue;
+      if (!p.MerchantId || !p.Description) continue;
+      if (imported >= MAX_PROMOTIONS) break;
       const title = p.Description || 'Promotion';
       const [rows] = await pool.execute('SELECT id FROM advertisers WHERE external_id = ?', [String(p.MerchantId)]);
       if (rows.length === 0) continue;
