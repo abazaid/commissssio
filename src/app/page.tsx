@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { query } from '@/lib/db';
 import { getTopDeals, getVerifiedCoupons } from '@/lib/ranking';
 import Link from 'next/link';
+import BannerSlider from '@/components/BannerSlider';
 import styles from './page.module.css';
 
 export const revalidate = 1800;
@@ -298,19 +299,16 @@ export default async function Home() {
       {banners.length > 0 && (
         <section className={styles.section}>
           <h2>Hot Deals Today</h2>
-          <div className={styles.bannerCarousel}>
-            {banners.map((banner) => (
-              <Link
-                key={banner.id}
-                href={`/api/click?creative_id=${banner.id}&sub_id=homepage_banner_${banner.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.bannerCard}
-              >
-                {banner.image_url && <img src={banner.image_url} alt="Banner" />}
-              </Link>
-            ))}
-          </div>
+          <BannerSlider
+            slides={banners
+              .filter((banner) => !!banner.image_url)
+              .map((banner) => ({
+                id: banner.id,
+                image_url: banner.image_url || '',
+                href: `/api/click?creative_id=${banner.id}&sub_id=homepage_banner_${banner.id}`,
+                alt: `Hot deal banner ${banner.id}`,
+              }))}
+          />
         </section>
       )}
 
