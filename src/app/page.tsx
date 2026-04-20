@@ -155,11 +155,17 @@ export default async function Home() {
   const generatedAt = new Date().toISOString().split('T')[0];
   const formatDate = (value?: Date | string | null) =>
     value ? new Date(value).toISOString().split('T')[0] : null;
+  const resolveUpdatedDate = (item: { updated_at?: Date | string | null; created_at?: Date | string | null }) =>
+    formatDate(item.updated_at || item.created_at) || generatedAt;
+  const sectionLastUpdated = [
+    ...topDeals.map((deal) => resolveUpdatedDate(deal)),
+    ...bestCoupons.map((coupon) => resolveUpdatedDate(coupon)),
+  ].sort().reverse()[0] || generatedAt;
   const comparisonRows = topDeals.slice(0, 6).map((deal) => ({
     name: deal.advertiser_name,
     dealType: deal.coupon_code ? 'Coupon Code' : 'Direct Deal',
     coupon: deal.coupon_code ? 'Yes' : 'No',
-    updated: formatDate(deal.created_at) || generatedAt,
+    updated: resolveUpdatedDate(deal),
   }));
 
   return (
@@ -201,7 +207,7 @@ export default async function Home() {
 
       <section className={styles.section}>
         <h2>Trending Deals</h2>
-        <p>Last updated: {generatedAt}</p>
+        <p>Last updated: {sectionLastUpdated}</p>
         <div className={styles.grid}>
           {topDeals.length > 0 ? topDeals.map((deal) => (
             <Link
@@ -213,9 +219,7 @@ export default async function Home() {
               {deal.logo_url && <img src={deal.logo_url} alt={deal.advertiser_name} />}
               <h3>{deal.title}</h3>
               <p className={styles.storeName}>{deal.advertiser_name}</p>
-              {formatDate(deal.created_at) && (
-                <p className={styles.storeName}>Updated: {formatDate(deal.created_at)}</p>
-              )}
+              <p className={styles.storeName}>Updated: {resolveUpdatedDate(deal)}</p>
               {deal.coupon_code ? (
                 <span className={styles.couponCode}>{deal.coupon_code}</span>
               ) : (
@@ -248,7 +252,7 @@ export default async function Home() {
 
       <section className={styles.section}>
         <h2>Best Verified Coupons</h2>
-        <p>Last updated: {generatedAt}</p>
+        <p>Last updated: {sectionLastUpdated}</p>
         <div className={styles.grid}>
           {bestCoupons.length > 0 ? bestCoupons.map((coupon) => (
             <Link
@@ -259,9 +263,7 @@ export default async function Home() {
               <div className={styles.cardBadge}>VERIFIED</div>
               <h3>{coupon.title}</h3>
               <p className={styles.storeName}>{coupon.advertiser_name}</p>
-              {formatDate(coupon.created_at) && (
-                <p className={styles.storeName}>Updated: {formatDate(coupon.created_at)}</p>
-              )}
+              <p className={styles.storeName}>Updated: {resolveUpdatedDate(coupon)}</p>
               {coupon.coupon_code && <span className={styles.couponCode}>{coupon.coupon_code}</span>}
             </Link>
           )) : (

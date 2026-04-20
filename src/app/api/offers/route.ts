@@ -46,7 +46,7 @@ export async function GET(request: Request) {
      FROM offers o
      JOIN advertisers a ON o.advertiser_id = a.id
      ${whereClause}
-     ORDER BY o.created_at DESC
+     ORDER BY o.updated_at DESC
      LIMIT ${safeLimit}`,
     params
   );

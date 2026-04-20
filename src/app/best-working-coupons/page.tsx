@@ -23,6 +23,9 @@ export default async function BestCouponsPage() {
   const generatedAt = new Date().toISOString().split('T')[0];
   const formatDate = (value?: Date | string | null) =>
     value ? new Date(value).toISOString().split('T')[0] : null;
+  const resolveUpdatedDate = (coupon: { updated_at?: Date | string | null; created_at?: Date | string | null }) =>
+    formatDate(coupon.updated_at || coupon.created_at) || generatedAt;
+  const pageLastUpdated = coupons.map(resolveUpdatedDate).sort().reverse()[0] || generatedAt;
 
   const listSchema = {
     '@context': 'https://schema.org',
@@ -45,7 +48,7 @@ export default async function BestCouponsPage() {
       </section>
 
       <section className={styles.section}>
-        <p>Last updated: {generatedAt}</p>
+        <p>Last updated: {pageLastUpdated}</p>
         <div className={styles.grid}>
           {coupons.map((coupon) => (
             <Link
@@ -55,7 +58,7 @@ export default async function BestCouponsPage() {
             >
               <h3>{coupon.title}</h3>
               <p>{coupon.advertiser_name}</p>
-              {formatDate(coupon.created_at) && <p>Updated: {formatDate(coupon.created_at)}</p>}
+              <p>Updated: {resolveUpdatedDate(coupon)}</p>
               <span className={styles.couponCode}>{coupon.coupon_code}</span>
             </Link>
           ))}

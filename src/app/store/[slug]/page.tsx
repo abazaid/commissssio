@@ -75,7 +75,13 @@ export default async function StorePage({ params }: Props) {
 
   const featuredBanner = creatives[0];
   const carouselBanners = creatives.slice(1, 8);
-  const lastVerified = new Date().toISOString().split('T')[0];
+  const lastVerified = (() => {
+    const latest = storeOffers
+      .map((offer) => (offer.updated_at ? new Date(offer.updated_at).getTime() : offer.created_at ? new Date(offer.created_at).getTime() : 0))
+      .sort((a, b) => b - a)[0];
+
+    return latest ? new Date(latest).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+  })();
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',

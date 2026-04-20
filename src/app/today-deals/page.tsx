@@ -23,6 +23,9 @@ export default async function TodayDealsPage() {
   const generatedAt = new Date().toISOString().split('T')[0];
   const formatDate = (value?: Date | string | null) =>
     value ? new Date(value).toISOString().split('T')[0] : null;
+  const resolveUpdatedDate = (deal: { updated_at?: Date | string | null; created_at?: Date | string | null }) =>
+    formatDate(deal.updated_at || deal.created_at) || generatedAt;
+  const pageLastUpdated = deals.map(resolveUpdatedDate).sort().reverse()[0] || generatedAt;
 
   const listSchema = {
     '@context': 'https://schema.org',
@@ -45,7 +48,7 @@ export default async function TodayDealsPage() {
       </section>
 
       <section className={styles.section}>
-        <p>Last updated: {generatedAt}</p>
+        <p>Last updated: {pageLastUpdated}</p>
         <div className={styles.grid}>
           {deals.map((deal) => (
             <Link
@@ -58,7 +61,7 @@ export default async function TodayDealsPage() {
               )}
               <h3>{deal.title}</h3>
               <p>{deal.advertiser_name}</p>
-              {formatDate(deal.created_at) && <p>Updated: {formatDate(deal.created_at)}</p>}
+              <p>Updated: {resolveUpdatedDate(deal)}</p>
               {deal.coupon_code && (
                 <span className={styles.couponCode}>{deal.coupon_code}</span>
               )}

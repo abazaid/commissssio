@@ -33,7 +33,7 @@ export default async function ElectronicsCouponsPage() {
       ? `${(discounts.reduce((sum, value) => sum + value, 0) / discounts.length).toFixed(1)}%`
       : 'N/A';
     const latestTimestamp = storeOffers
-      .map((offer) => (offer.created_at ? new Date(offer.created_at).getTime() : 0))
+      .map((offer) => (offer.updated_at ? new Date(offer.updated_at).getTime() : offer.created_at ? new Date(offer.created_at).getTime() : 0))
       .sort((a, b) => b - a)[0];
     const lastUpdated = latestTimestamp ? new Date(latestTimestamp).toISOString().split('T')[0] : today;
 

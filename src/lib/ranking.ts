@@ -21,6 +21,7 @@ interface OfferWithAdvertiser {
   epc: number | null;
   clicks_count?: number;
   created_at?: Date;
+  updated_at?: Date;
   score?: number;
 }
 
@@ -33,9 +34,9 @@ function calculateClickScore(clicksCount: number, maxScore: number = 10): number
   return Math.min(maxScore, clicksCount / 100);
 }
 
-function calculateFreshnessScore(createdAt: Date | null): number {
-  if (!createdAt) return 0;
-  const daysOld = (Date.now() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24);
+function calculateFreshnessScore(updatedAt: Date | null): number {
+  if (!updatedAt) return 0;
+  const daysOld = (Date.now() - new Date(updatedAt).getTime()) / (1000 * 60 * 60 * 24);
   if (daysOld < 1) return 10;
   if (daysOld < 7) return 8;
   if (daysOld < 14) return 6;
@@ -64,7 +65,7 @@ function calculateScore(offer: OfferWithAdvertiser): number {
   const clicksScore = calculateClickScore(offer.clicks_count || 0);
   const verifiedScore = offer.is_verified === 1 ? 5 : 0;
   const expiryScore = calculateExpiryScore(offer.end_date);
-  const freshnessScore = calculateFreshnessScore(offer.created_at || null);
+  const freshnessScore = calculateFreshnessScore(offer.updated_at || offer.created_at || null);
   
   const score =
     (normalizedEpc * 0.4) +
@@ -105,7 +106,7 @@ export async function getRankedOffers(
     `SELECT 
       o.id, o.title, o.description, o.coupon_code, o.destination_url, o.tracking_url,
       o.start_date, o.end_date, o.is_verified, o.is_expired, o.advertiser_id, o.category,
-      o.created_at,
+      o.created_at, o.updated_at,
       a.name as advertiser_name, a.slug as advertiser_slug, a.logo_url, 
       COALESCE(a.commission_rate, 0) as commission_rate,
       COALESCE(a.avg_order_value, 0) as avg_order_value,
@@ -118,7 +119,7 @@ export async function getRankedOffers(
     WHERE o.is_expired = 0 AND a.status = 'active' ${categoryFilter} ${advertiserFilter}
     GROUP BY o.id, a.id, c.clicks
     ORDER BY 
-      o.created_at DESC,
+      o.updated_at DESC,
       COALESCE(c.clicks, 0) DESC
     LIMIT ${queryLimit}`,
     params
@@ -149,7 +150,7 @@ export async function getVerifiedCoupons(limit = 50): Promise<OfferWithAdvertise
     `SELECT 
       o.id, o.title, o.description, o.coupon_code, o.destination_url, o.tracking_url,
       o.start_date, o.end_date, o.is_verified, o.is_expired, o.advertiser_id,
-      o.created_at,
+      o.created_at, o.updated_at,
       a.name as advertiser_name, a.slug as advertiser_slug, a.logo_url, 
       COALESCE(a.commission_rate, 0) as commission_rate,
       COALESCE(c.clicks, 0) as clicks_count

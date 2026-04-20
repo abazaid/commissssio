@@ -29,6 +29,7 @@ type CategoryOffer = {
   epc: number;
   clicks_count: number;
   created_at?: Date;
+  updated_at?: Date;
   score?: number;
 };
 
@@ -59,7 +60,7 @@ export async function getCategoryData(category: string) {
       `SELECT
          o.id, o.title, o.description, o.coupon_code, o.destination_url, o.tracking_url,
          o.start_date, o.end_date, o.is_verified, o.is_expired, o.advertiser_id,
-         o.created_at,
+         o.created_at, o.updated_at,
          a.name as advertiser_name, a.slug as advertiser_slug, a.logo_url,
          COALESCE(a.commission_rate, 0) as commission_rate,
          COALESCE(a.avg_order_value, 0) as avg_order_value,
