@@ -63,12 +63,68 @@ async function getRandomBanners() {
   }
 }
 
+async function getFeaturedStoreSpotlight(featuredSlug = 'fresh-beauty-co') {
+  try {
+    const stores = await query<{
+      id: number;
+      name: string;
+      slug: string;
+      logo_url: string | null;
+    }>(
+      `SELECT id, name, slug, logo_url
+       FROM advertisers
+       WHERE status = 'active' AND slug = ?
+       LIMIT 1`,
+      [featuredSlug]
+    );
+
+    if (stores.length === 0) return null;
+    const store = stores[0];
+
+    const banners = await query<{
+      id: number;
+      image_url: string | null;
+      updated_at?: Date | string | null;
+    }>(
+      `SELECT id, image_url, updated_at
+       FROM creatives
+       WHERE advertiser_id = ? AND image_url IS NOT NULL
+       ORDER BY updated_at DESC, id DESC
+       LIMIT 1`,
+      [store.id]
+    );
+
+    const offers = await query<{
+      id: number;
+      title: string;
+      coupon_code: string | null;
+      updated_at?: Date | string | null;
+    }>(
+      `SELECT id, title, coupon_code, updated_at
+       FROM offers
+       WHERE advertiser_id = ? AND is_expired = 0
+       ORDER BY updated_at DESC, id DESC
+       LIMIT 1`,
+      [store.id]
+    );
+
+    return {
+      store,
+      banner: banners[0] || null,
+      offer: offers[0] || null,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export default async function Home() {
-  const [topDeals, topStores, bestCoupons, banners] = await Promise.all([
+  const [topDeals, topStores, bestCoupons, banners, featuredSpotlight] = await Promise.all([
     getTopDeals(8),
     getTopStores(),
     getVerifiedCoupons(8),
     getRandomBanners(),
+    getFeaturedStoreSpotlight('fresh-beauty-co'),
   ]);
 
   const categoryLinks = [
@@ -185,6 +241,59 @@ export default async function Home() {
           <button type="submit" className={styles.searchButton}>Search</button>
         </form>
       </section>
+
+      {featuredSpotlight && (
+        <section className={styles.spotlightSection}>
+          <div className={styles.spotlightContent}>
+            <p className={styles.spotlightLabel}>Featured Brand</p>
+            <h2>{featuredSpotlight.store.name} Spotlight</h2>
+            <p>
+              Handpicked highlights from {featuredSpotlight.store.name}. Explore the latest beauty offers and jump directly to active deals.
+            </p>
+            <div className={styles.spotlightActions}>
+              <Link href={`/store/${featuredSpotlight.store.slug}`} className={styles.spotlightBtnPrimary}>
+                Explore {featuredSpotlight.store.name}
+              </Link>
+              {featuredSpotlight.offer && (
+                <Link
+                  href={`/api/click?offer_id=${featuredSpotlight.offer.id}&sub_id=homepage_featured_${featuredSpotlight.store.slug}`}
+                  className={styles.spotlightBtnSecondary}
+                >
+                  {featuredSpotlight.offer.coupon_code ? 'Get Latest Code' : 'View Latest Deal'}
+                </Link>
+              )}
+            </div>
+            {featuredSpotlight.offer && (
+              <p className={styles.spotlightOfferTitle}>Now trending: {featuredSpotlight.offer.title}</p>
+            )}
+          </div>
+
+          <div className={styles.spotlightMedia}>
+            {featuredSpotlight.banner?.image_url ? (
+              <Link
+                href={`/api/click?creative_id=${featuredSpotlight.banner.id}&sub_id=homepage_featured_banner_${featuredSpotlight.store.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.spotlightBannerLink}
+              >
+                <img
+                  src={featuredSpotlight.banner.image_url}
+                  alt={`${featuredSpotlight.store.name} featured banner`}
+                  className={styles.spotlightBanner}
+                />
+              </Link>
+            ) : (
+              featuredSpotlight.store.logo_url && (
+                <img
+                  src={featuredSpotlight.store.logo_url}
+                  alt={featuredSpotlight.store.name}
+                  className={styles.spotlightLogoFallback}
+                />
+              )
+            )}
+          </div>
+        </section>
+      )}
 
       {banners.length > 0 && (
         <section className={styles.section}>
