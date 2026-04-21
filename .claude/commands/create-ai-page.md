@@ -24,7 +24,13 @@ Set:
 
 ### STEP 2 — Query the database for matching offers and stores
 
-Before any web search, query the local MySQL database (`commnision`) using the `query()` helper in `src/lib/db.ts`.
+The database is hosted on Coolify (remote MySQL 8 at `77.42.44.53:3306`, database `default`).
+Connection details are in `.env` — `src/lib/db.ts` reads them automatically.
+
+**Database schema (actual):**
+- `advertisers`: id, name, slug, logo_url, status, epc, conversion_rate — 570 rows
+- `offers`: id, advertiser_id, title, description, coupon_code, destination_url, tracking_url, start_date, end_date, is_expired, category — 7,457 rows
+- Note: most offers have `category = NULL`, so search by `title` and `description` is essential.
 
 **Get relevant offers for this category:**
 ```sql
@@ -33,7 +39,6 @@ SELECT
   o.title,
   o.description,
   o.coupon_code,
-  o.category,
   o.end_date,
   o.is_verified,
   a.id         AS advertiser_id,
@@ -42,11 +47,11 @@ SELECT
   a.logo_url
 FROM offers o
 JOIN advertisers a ON o.advertiser_id = a.id
-WHERE o.is_expired = FALSE
+WHERE o.is_expired = 0
   AND (
-    o.category LIKE '%[CATEGORY]%'
-    OR o.title LIKE '%[CATEGORY]%'
+    o.title LIKE '%[CATEGORY]%'
     OR o.description LIKE '%[CATEGORY]%'
+    OR o.category LIKE '%[CATEGORY]%'
   )
 ORDER BY a.epc DESC, a.conversion_rate DESC
 LIMIT 20;
@@ -57,8 +62,8 @@ LIMIT 20;
 SELECT id, name, slug, logo_url
 FROM advertisers
 WHERE status = 'active'
-ORDER BY epc DESC, conversion_rate DESC
-LIMIT 30;
+ORDER BY name ASC
+LIMIT 50;
 ```
 
 Record from the results:

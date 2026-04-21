@@ -1,11 +1,5 @@
 {
-  "env": {
-    "ANTHROPIC_AUTH_TOKEN": "sk-api-WYhiR5tpDdmrEWnq0LaFomyd0BobZEh29hPim1jxl6pC-e2TvYd8dMlSf5oEMFTEJRy0o4wPkp8fUZg1B4mZv6VGatjUAl8stpyQjNHQ2L5vss8d6mSQcL8",
-    "ANTHROPIC_BASE_URL": "https://api.minimax.io/anthropic",
-    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "MiniMax-M2.7",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "MiniMax-M2.7",
-    "ANTHROPIC_DEFAULT_SONNET_MODEL": "MiniMax-M2.7"
-  },
+  "env": {},
   "permissions": {
     "allow": [
       "WebSearch",
@@ -13,7 +7,21 @@
       "Bash(mysql *)",
       "WebFetch(domain:www.adorebeauty.com.au)",
       "WebFetch(domain:www.adorenew.com.au)",
-      "WebFetch(domain:www.priceline.com.au)"
+      "WebFetch(domain:www.priceline.com.au)",
+      "Bash(node *)",
+      "Bash(npx ts-node *)",
+      "Bash(npx tsx *)",
+      "Read(//c/xampp/**)",
+      "Bash(./mysql/bin/mysqladmin -u root status)",
+      "Bash(./mysql_start.bat)",
+      "Bash(net start *)",
+      "Bash(sc query *)",
+      "Bash(./mysqld --console --standalone)",
+      "Bash(./mysqladmin -u root status)",
+      "WebFetch(domain:www.google.com)",
+      "Bash(curl -s https://aussiedealz.com/store/one-honey-boutique)",
+      "WebFetch(domain:www.bing.com)",
+      "mcp__plugin_claude-mem_mcp-search__get_observations"
     ]
   }
 }
